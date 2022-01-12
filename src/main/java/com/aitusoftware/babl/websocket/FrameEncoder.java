@@ -135,6 +135,10 @@ final class FrameEncoder
         final int initialFrameOpcode)
     {
         int frameCount = length / maxFramePayloadSize;
+        if (frameCount == 0)
+        {
+            frameCount = 1;
+        }
         if (frameCount * maxFramePayloadSize < length)
         {
             frameCount++;

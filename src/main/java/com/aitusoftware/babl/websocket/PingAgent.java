@@ -31,6 +31,8 @@ final class PingAgent
 {
     static final int MAX_PING_PAYLOAD_LENGTH = 125;
 
+    private static final int PONG_NOT_REQUIRED = -1;
+
     private final FrameEncoder frameEncoder;
     private final EpochClock clock;
     private final long pingIntervalMs;
@@ -43,7 +45,7 @@ final class PingAgent
     private long lastPingPayload;
     private long pongResponseDeadlineMs = Long.MAX_VALUE;
     private boolean awaitingPong = false;
-    private int pongPayloadLength;
+    private int pongPayloadLength = PONG_NOT_REQUIRED;
     private long sessionId;
 
     PingAgent(
@@ -101,7 +103,7 @@ final class PingAgent
         }
         if (pongRequired() && tryWritePong())
         {
-            pongPayloadLength = 0;
+            pongPayloadLength = PONG_NOT_REQUIRED;
             sessionDataListener.sendDataAvailable();
             workDone = 1;
         }
@@ -164,7 +166,7 @@ final class PingAgent
 
     boolean pongRequired()
     {
-        return pongPayloadLength != 0;
+        return pongPayloadLength != PONG_NOT_REQUIRED;
     }
 
     abstract static class PingPayloadSupplier
